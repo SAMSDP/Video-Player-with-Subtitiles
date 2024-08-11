@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player with Subtitles</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Upload and Play Your Video</h1>
+            <label class="switch">
+                <input type="checkbox" id="dark-mode-toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <div class="upload-controls">
+            <label for="video-upload" class="upload-label">Video File</label>
+            <input type="file" id="video-upload" accept="video/*">
+        </div>
+        
+        <div class="upload-controls">
+            <label for="subtitle-upload" class="upload-label">Subtitles File</label>
+            <input type="file" id="subtitle-upload" accept=".srt">
+        </div>
+        
+        <div id="video-container">
+            <video id="video" controls></video>
+        </div>
+
+        <div class="controls">
+            <button id="rewind">Rewind 10s</button>
+            <button id="forward">Forward 10s</button>
+        </div>
+    </div>
+
+    <script>
+        // Dark Mode Toggle
+        const toggleSwitch = document.getElementById('dark-mode-toggle');
+        const body = document.body;
+
+        toggleSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                body.classList.add('dark-mode');
+            } else {
+                body.classList.remove('dark-mode');
+            }
+        });
+
+        // Video Upload and Play
+        document.getElementById('video-upload').addEventListener('change', function(event) {
+            const videoFile = event.target.files[0];
+            const videoElement = document.getElementById('video');
+
+            if (videoFile) {
+                const videoURL = URL.createObjectURL(videoFile);
+                videoElement.src = videoURL;
+                videoElement.load();
+                videoElement.play();
+            }
+        });
+
+        // Subtitle Upload and Display
+        document.getElementById('subtitle-upload').addEventListener('change', function(event) {
+            const subtitleFile = event.target.files[0];
+            const videoElement = document.getElementById('video');
+
+            if (subtitleFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const srtText = e.target.result;
+                    const vttText = srtToVtt(srtText);
+                    addSubtitleTrack(videoElement, vttText);
+                };
+                reader.readAsText(subtitleFile);
+            }
+        });
+
+        function srtToVtt(srt) {
+            // Add WebVTT header
+            let vtt = 'WEBVTT\n\n';
+            const lines = srt.split('\n');
+
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].trim() === '') {
+                    continue;
+                }
+
+                // Subtitle sequence number
+                if (isNaN(lines[i])) {
+                    continue;
+                }
+
+                // Timestamp line
+                const timestampLine = lines[++i];
+                const [start, end] = timestampLine.split(' --> ');
+                const formattedStart = formatTimestamp(start.trim());
+                const formattedEnd = formatTimestamp(end.trim());
+
+                // Text lines
+                let textLines = '';
+                while (++i < lines.length && lines[i].trim() !== '') {
+                    textLines += lines[i] + '\n';
+                }
+
+                // Construct VTT entry
+                vtt += `${formattedStart} --> ${formattedEnd}\n${textLines}\n`;
+            }
+
+            return vtt;
+        }
+
+        function formatTimestamp(timestamp) {
+            // Convert SRT timestamp format to VTT format
+            return timestamp
+                .replace(',', '.') // Replace comma with dot
+                .replace(/(\d{2}):(\d{2}):(\d{2})\.(\d{3})/, '$1:$2:$3.$4');
+        }
+
+        function addSubtitleTrack(videoElement, vttText) {
+            // Remove any existing subtitle tracks
+            const existingTracks = videoElement.querySelectorAll('track');
+            existingTracks.forEach(track => track.remove());
+
+            // Create a new track
+            const track = document.createElement('track');
+            track.kind = 'subtitles';
+            track.label = 'English';
+            track.srclang = 'en';
+            track.src = URL.createObjectURL(new Blob([vttText], { type: 'text/vtt' }));
+            videoElement.appendChild(track);
+            
+            // Set the track mode to showing
+            const textTracks = videoElement.textTracks;
+            for (let i = 0; i < textTracks.length; i++) {
+                textTracks[i].mode = 'hidden'; // Hide all tracks initially
+            }
+            if (textTracks.length > 0) {
+                textTracks[0].mode = 'showing'; // Show the first track
+            }
+        }
+
+        // Forward and Rewind Buttons
+        document.getElementById('rewind').addEventListener('click', function() {
+            const video = document.getElementById('video');
+            video.currentTime -= 10;
+        });
+
+        document.getElementById('forward').addEventListener('click', function() {
+            const video = document.getElementById('video');
+            video.currentTime += 10;
+        });
+    </script>
+</body>
+</html>
