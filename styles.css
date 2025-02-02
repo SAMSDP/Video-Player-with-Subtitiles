@@ -2,7 +2,7 @@ body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #2a2a2a 0%, #5f5f5f 100%);
+    background: linear-gradient(135deg, #004e92 0%, #000428 100%);
     color: #333;
     overflow: hidden; /* Prevent scrolling */
     transition: background-color 0.3s, color 0.3s;
@@ -76,7 +76,7 @@ input:checked + .slider {
 
 input:checked + .slider:before {
     transform: translateX(26px);
-}
+}   
 
 .dark-mode {
     background-color: #1c1c1c; /* Dark background color for dark mode */
