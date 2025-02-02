@@ -170,3 +170,88 @@ button:active {
         font-size: 14px;
     }
 }
+
+/* Existing styles remain unchanged... */
+
+/* Media Queries for Mobile View */
+@media (max-width: 768px) {
+    /* Adjust header font size */
+    .header h1 {
+        font-size: 1.8em;
+    }
+
+    /* Stack upload controls vertically */
+    .video-upload, .subtitle_control {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Adjust video container size */
+    #video-container {
+        width: 100%;
+        height: 50vh; /* Adjust height for smaller screens */
+    }
+
+    /* Adjust file input button size */
+    input[type="file"] {
+        font-size: 14px;
+    }
+
+    /* Adjust button size */
+    button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    /* Rewind and Forward buttons specific styles */
+    #rewind, #forward {
+        padding: 8px 12px; /* Make buttons more compact */
+        font-size: 14px;
+        width: 40%; /* Make buttons smaller on smaller screens */
+    }
+
+    /* Align Rewind and Forward buttons in a row on mobile */
+    .controls {
+        justify-content: space-around; /* Spread buttons evenly */
+    }
+}
+
+/* Additional Media Query for Small Mobile Devices */
+@media (max-width: 480px) {
+    /* Further reduce header font size */
+    .header h1 {
+        font-size: 1.4em;
+    }
+
+    /* Adjust video container height for small screens */
+    #video-container {
+        height: 40vh; /* Smaller height for mobile devices */
+    }
+
+    /* Stack buttons vertically for small mobile screens */
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Adjust button size further for smaller devices */
+    button {
+        width: 80%;
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    /* Adjust Rewind and Forward buttons for smaller screens */
+    #rewind, #forward {
+        width: 80%; /* Make buttons full width for smaller devices */
+        font-size: 12px; /* Smaller font size */
+        padding: 8px 10px; /* Compact padding */
+    }
+
+    /* Ensure file input button fits well */
+    input[type="file"] {
+        font-size: 13px;
+    }
+}
+
+
